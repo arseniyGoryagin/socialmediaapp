@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.arseniy.blogapp.Routes
+import com.arseniy.blogapp.navigation.Routes
 import com.arseniy.blogapp.util.components.MainBottomBar
 
 

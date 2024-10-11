@@ -58,19 +58,41 @@ class LoginViewModel @Inject constructor(private val repository: Repository)  : 
 
     fun login(){
 
+        println("loginged in!!!")
+
         viewModelScope.launch {
 
-                loginUiState.value = loginUiState.value.copy(isLoading = true)
+            loginUiState.value = loginUiState.value.copy(isLoading = true)
 
-                val result = repository.login(  loginInputState.value.usernameInput, loginInputState.value.passwordInput)
+            try {
 
-            result.onLeft {
+                val result = repository.login(
+                    loginInputState.value.usernameInput,
+                    loginInputState.value.passwordInput
+                )
 
-                loginUiState.value = loginUiState.value.copy(isLoginSuccess = false, isErrorRead = false, errorMessage = it.message)
+                result.onLeft {
 
-            }.onRight {
+                    loginUiState.value = loginUiState.value.copy(
+                        isLoading = false,
+                        isLoginSuccess = false,
+                        isErrorRead = false,
+                        errorMessage = it.message
+                    )
 
-                loginUiState.value = loginUiState.value.copy(isLoading = true, isLoginSuccess = true)
+                }.onRight {
+
+                    loginUiState.value = loginUiState.value.copy(isLoading = false, isLoginSuccess = true)
+                }
+            }catch (e : Exception){
+
+                loginUiState.value = loginUiState.value.copy(
+                    isLoading = false,
+                    isLoginSuccess = false,
+                    isErrorRead = false,
+                    errorMessage = e.message
+                )
+
             }
 
 

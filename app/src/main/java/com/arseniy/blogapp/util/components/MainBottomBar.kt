@@ -22,13 +22,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arseniy.blogapp.Routes
+import com.arseniy.blogapp.navigation.Routes
+
 
 @Composable
 fun MainBottomBar(onHomeClick : () -> Unit,
                   onNotificationsClick : () -> Unit,
-                  onNewPostClick : () -> Unit, currentRoute : String,
+                  onNewPostClick : () -> Unit,
+                  currentRoute : Routes,
                   modifier: Modifier = Modifier){
+
+
+
+
 
   BottomAppBar(
 
@@ -40,14 +46,14 @@ fun MainBottomBar(onHomeClick : () -> Unit,
       backgroundColor = Color.White,
       elevation = 12.dp
   ) {
-      BottomNavigationItem(selected = currentRoute == Routes.Home, onClick = onHomeClick, icon = {
+      BottomNavigationItem(selected = currentRoute is Routes.Home, onClick = onHomeClick, icon = {
        Icon(Icons.Filled.Home , contentDescription = null)
       })
-      BottomNavigationItem(selected = currentRoute == Routes.Notifications, onClick = onNotificationsClick, icon = {
+      BottomNavigationItem(selected = currentRoute is Routes.Notifications, onClick = onNotificationsClick, icon = {
           Icon(Icons.Filled.Notifications , contentDescription = null)
       })
       BottomNavigationItem(
-          selected = currentRoute == Routes.NewPost,
+          selected = currentRoute is  Routes.AddPost,
           onClick = onNewPostClick,
           icon = {
               Box(

@@ -58,20 +58,7 @@ class RegisterViewModel  @Inject constructor(private val repository: Repository)
     var registerInputState : RegisterUiInputState by mutableStateOf(RegisterUiInputState())
         private set
 
-    /*
-    fun onUiEvent(event : RegisterUiEvent){
 
-        registerState = when(event){
-            is RegisterUiEvent.ConfirmPasswordChange -> registerState.copy(confirmPasswordInput = event.newValue)
-            is RegisterUiEvent.EmailChange -> registerState.copy(emailInput = event.newValue)
-            is RegisterUiEvent.PasswordChange -> registerState.copy(passwordInput = event.newValue)
-            is RegisterUiEvent.ShowConfirmPasswordChange -> registerState.copy(showConfirmPassword = event.newValue)
-            is RegisterUiEvent.ShowPasswordChange -> registerState.copy(showPassword = event.newValue)
-            is RegisterUiEvent.TermsOfServiceChange -> registerState.copy(termsOfServiceChecked = event.newValue)
-            is RegisterUiEvent.UsernameChange -> registerState.copy(usernameInput = event.newValue)
-        }
-
-    }*/
 
     fun onUiEvent(event : RegisterUiEvent){
 

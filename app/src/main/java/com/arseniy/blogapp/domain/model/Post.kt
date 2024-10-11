@@ -1,5 +1,6 @@
-package com.arseniy.blogapp.feed.domain.model
+package com.arseniy.blogapp.domain.model
 
+import com.arseniy.blogapp.user.domain.model.User
 import kotlinx.serialization.Serializable
 
 
@@ -12,8 +13,7 @@ data class Post(
 
     val likes : Long,
 
-    val username : String,
+    val user : User,
     val edited : Boolean
-
 
 )

@@ -2,8 +2,7 @@ package com.arseniy.blogapp.data.local.enteties
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.arseniy.blogapp.feed.domain.model.Post
-import org.intellij.lang.annotations.Identifier
+import com.arseniy.blogapp.domain.model.Post
 
 
 @Entity(tableName = "posts_table")
@@ -11,15 +10,16 @@ data class  PostEntity (
 
     @PrimaryKey
     val id :Long,
-
     val body : String,
-
     val likes : Long,
+    val edited : Boolean,
+
+
 
     val username : String,
-    val edited : Boolean
-
-
+    val description : String,
+    val profilePicture : String,
+    val userId : Long
 
 
 ){
@@ -27,14 +27,19 @@ data class  PostEntity (
     companion object{
 
 
-        fun toPostEntity(post : Post  ) : PostEntity{
+        fun toPostEntity(post : Post) : PostEntity{
 
             return PostEntity(
                 id = post.id,
                 likes = post.likes,
                 body = post.body,
-                username = post.username,
-                edited = post.edited
+                edited = post.edited,
+
+
+                username = post.user.username,
+                description = post.user.description,
+                profilePicture = post.user.profilePicture,
+                userId = post.user.id
             )
 
         }

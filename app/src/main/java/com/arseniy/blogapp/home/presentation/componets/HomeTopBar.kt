@@ -1,4 +1,4 @@
-package com.arseniy.blogapp.feed.presentation.componets
+package com.arseniy.blogapp.home.presentation.componets
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +18,7 @@ import com.arseniy.blogapp.util.components.SearchBar
 
 
 @Composable
-fun HomeTopBar(onProfileClick : () -> Unit, onSearch : (String) -> Unit, onSettingsClicked : () -> Unit ,searchValue : String){
+fun HomeTopBar(onProfileClick : () -> Unit, onSearch : (String) -> Unit ,searchValue : String){
 
 
     TopAppBar(
@@ -37,10 +37,6 @@ fun HomeTopBar(onProfileClick : () -> Unit, onSearch : (String) -> Unit, onSetti
 
             SearchBar(onChange = onSearch, value = searchValue)
 
-            Icon(
-                Icons.Filled.Settings,
-                contentDescription = "Settings",
-                modifier = Modifier.clickable { onSettingsClicked() })
         }
 
     }

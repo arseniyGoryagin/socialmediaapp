@@ -8,16 +8,12 @@ import com.arseniy.blogapp.auth.domain.dto.TokenResponse
 import com.arseniy.blogapp.data.local.TokenManager
 import com.arseniy.blogapp.data.local.db.Db
 import com.arseniy.blogapp.data.local.enteties.PostEntity
-import com.arseniy.blogapp.feed.domain.model.Post
+import com.arseniy.blogapp.domain.model.Post
 import com.arseniy.blogapp.network.domain.ApiService
-import com.arseniy.blogapp.network.domain.dto.ErrorResponse
 import com.arseniy.blogapp.network.domain.dto.PostRequest
-import com.arseniy.blogapp.network.domain.dto.PostsResponse
 import com.arseniy.blogapp.user.domain.model.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
-import retrofit2.Response
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(private val apiService: ApiService,
@@ -82,11 +78,27 @@ class RepositoryImpl @Inject constructor(private val apiService: ApiService,
         offset: Long,
         limit: Long
     ): Either<Exception, List<Post>> {
-       TODO()
+        return Either.catch {
+            val value = "Bearer " + tokenManager.getToken().first()
+            apiService.getUserPost(username = username, token = value, offset = offset, limit = limit)
+        }.mapLeft { it as Exception }
     }
 
     override suspend fun getUser(username: String): Either<Exception, User> {
-        TODO("Not yet implemented")
+
+        println("Username ==== " + username)
+
+        return Either.catch {
+            val value = "Bearer " + tokenManager.getToken().first()
+            apiService.getUser(username = username, token = value)
+        }.mapLeft { it as Exception }
+    }
+
+    override suspend fun getMe(): Either<Exception, User> {
+        return Either.catch {
+            val value = "Bearer " + tokenManager.getToken().first()
+            apiService.getMe(token = value)
+        }.mapLeft { it as Exception }
     }
 
     override suspend fun clearAllPosts() {
@@ -103,6 +115,11 @@ class RepositoryImpl @Inject constructor(private val apiService: ApiService,
 
     override fun getTokenFlow(): Flow<String> {
         return tokenManager.getToken()
+    }
+
+    override suspend fun logOut() {
+        clearAllPosts()
+        tokenManager.deleteToken()
     }
 
 

@@ -4,14 +4,9 @@ import androidx.paging.PagingSource
 import arrow.core.Either
 import com.arseniy.blogapp.auth.domain.dto.TokenResponse
 import com.arseniy.blogapp.data.local.enteties.PostEntity
-import com.arseniy.blogapp.feed.domain.model.Post
-import com.arseniy.blogapp.network.domain.dto.ErrorResponse
-import com.arseniy.blogapp.network.domain.dto.PostResponse
-import com.arseniy.blogapp.network.domain.dto.PostsResponse
-import com.arseniy.blogapp.network.domain.dto.UserResponse
+import com.arseniy.blogapp.domain.model.Post
 import com.arseniy.blogapp.user.domain.model.User
 import kotlinx.coroutines.flow.Flow
-import retrofit2.Response
 
 interface Repository {
 
@@ -37,7 +32,7 @@ interface Repository {
 
     suspend fun getUser(username : String ) : Either<Exception, User>
 
-
+    suspend fun getMe() : Either<Exception, User>
 
 
     // Db operations
@@ -54,5 +49,7 @@ interface Repository {
     // Token
 
     fun getTokenFlow() : Flow<String>
+
+    suspend fun logOut()
 
 }

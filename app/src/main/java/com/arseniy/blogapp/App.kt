@@ -5,16 +5,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.arseniy.blogapp.addpost.presentation.AddPostScreen
 import com.arseniy.blogapp.addpost.presentation.viewmodel.AddPostViewModel
 import com.arseniy.blogapp.auth.presentation.LoginScreen
@@ -22,27 +20,17 @@ import com.arseniy.blogapp.auth.presentation.RegisterScreen
 import com.arseniy.blogapp.auth.presentation.WelcomeScreen
 import com.arseniy.blogapp.auth.presentation.viewmodels.LoginViewModel
 import com.arseniy.blogapp.auth.presentation.viewmodels.RegisterViewModel
-import com.arseniy.blogapp.feed.presentation.HomeScreen
-import com.arseniy.blogapp.feed.presentation.viewmodel.HomeViewModel
+import com.arseniy.blogapp.home.presentation.HomeScreen
+import com.arseniy.blogapp.home.presentation.viewmodel.HomeViewModel
+import com.arseniy.blogapp.myprofile.presentation.MyProfileScreen
+import com.arseniy.blogapp.myprofile.presentation.viewmodels.MyProfileViewModel
+import com.arseniy.blogapp.navigation.Routes
 import com.arseniy.blogapp.notifications.presentation.NotificationsScreen
-import com.arseniy.blogapp.util.components.MainBottomBar
+import com.arseniy.blogapp.profile.presentation.ProfileScreen
+import com.arseniy.blogapp.profile.presentation.viewmodels.ProfileViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 
-
-object Routes{
-
-
-        const val Home = "Home"
-        const val NewPost = "NewPost"
-        const val Auth = "Auth"
-        const val Main = "Main"
-        const val Welcome = "Welcome"
-        const val Register = "Register"
-        const val Login= "Login"
-        const val Notifications = "Notifications"
-
-
-}
 
 @SuppressLint("UnrememberedMutableState", "UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -54,7 +42,12 @@ fun App(){
 
         val appViewModel : AppViewModel = hiltViewModel()
 
-        LaunchedEffect(appViewModel.token){
+        val tokenState =appViewModel.token.collectAsState(initial = "")
+
+        LaunchedEffect(tokenState){
+
+                println("token === " + appViewModel.token)
+
                 appViewModel.token.collectLatest { token ->
 
                         if(token == ""){
@@ -67,10 +60,6 @@ fun App(){
                 }
         }
 
-
-        val currentBackStackEntry by navController.currentBackStackEntryAsState()
-
-        val currentDestination  = currentBackStackEntry?.destination?.route
 
 
         Scaffold(
@@ -87,9 +76,9 @@ fun App(){
                               //  exitTransition = { ExitTransition.None}){
 
 
-                        navigation(route = Routes.Auth,  startDestination = Routes.Welcome) {
+                        navigation<Routes.Auth>(startDestination = Routes.Welcome) {
 
-                                composable(Routes.Welcome) {
+                                composable<Routes.Welcome> {
 
                                         val onLoginClick = {
 
@@ -102,7 +91,7 @@ fun App(){
                                                 navController.navigate(Routes.Register)
                                         }, onLoginClick = onLoginClick)
                                 }
-                                composable(Routes.Login){
+                                composable<Routes.Login>{
 
 
                                         val loginViewModel = hiltViewModel<LoginViewModel>()
@@ -115,7 +104,7 @@ fun App(){
                                         }
 
 
-                                        LaunchedEffect(loginViewModel.loginUiState) {
+                                        LaunchedEffect(loginViewModel.loginUiState.value) {
                                                 if(loginViewModel.loginUiState.value.isLoginSuccess){
                                                         navController.navigate(Routes.Main){
                                                                 popUpTo(Routes.Welcome){
@@ -129,7 +118,7 @@ fun App(){
                                         LoginScreen(onBackClick = onBackClick, loginViewModel = loginViewModel)
                                 }
 
-                                composable(Routes.Register) {
+                                composable<Routes.Register> {
 
                                         val registerViewModel = hiltViewModel<RegisterViewModel>()
 
@@ -157,24 +146,58 @@ fun App(){
 
 
 
-                        navigation( route = Routes.Main, startDestination = Routes.Home){
+                        navigation<Routes.Main>(startDestination = Routes.Home){
 
-                                composable(Routes.Home) {
+                                composable<Routes.Home> {
 
                                         val homeViewModel : HomeViewModel= hiltViewModel()
 
-                                        HomeScreen (homeViewModel= homeViewModel, onNotificationClick = {
+                                        HomeScreen (
+                                                homeViewModel= homeViewModel,
+                                                onNotificationClick = {
                                                 navController.navigate(Routes.Notifications) {
                                                         popUpTo(Routes.Notifications) {
                                                                 inclusive = true
                                                         }
                                                 }
-                                        }, onAddPostClick = {
-                                                navController.navigate(Routes.NewPost)
-                                        })
+                                        },
+                                                onAddPostClick = {
+                                                navController.navigate(Routes.AddPost)
+                                        },
+                                                onUsernameClick = { username ->
+                                                        navController.navigate(Routes.Profile(username))
+                                                },
+
+                                                onProfileClick = {
+                                                        navController.navigate(Routes.MyProfile)
+                                                }
+                                                )
+                                }
+                                composable<Routes.Profile> { backStackEntry ->
+
+
+                                        val profileRoute : Routes.Profile = backStackEntry.toRoute<Routes.Profile>()
+
+                                        val profileViewModel : ProfileViewModel = hiltViewModel()
+
+
+                                        LaunchedEffect(profileRoute.username) {
+                                                profileViewModel.loadProfileData(profileRoute.username)
+                                        }
+
+
+                                        ProfileScreen(
+                                                profileViewModel = profileViewModel,
+                                                onBackClick = {
+                                                navController.navigateUp()
+                                                },
+                                                onRetryClick = {
+                                                        profileViewModel.loadProfileData(profileRoute.username)
+                                                }
+                                        )
                                 }
 
-                                composable(Routes.Notifications) {
+                                composable<Routes.Notifications> {
                                         NotificationsScreen(
                                                 onHomeClick = { navController.navigate(Routes.Home) {
                                                 popUpTo(Routes.Home) {
@@ -182,13 +205,39 @@ fun App(){
                                                 }
                                         }}, onAddPostClick = {
 
-                                                        navController.navigate(Routes.NewPost)
+                                                        navController.navigate(Routes.AddPost)
 
                                                 })
                                 }
 
+                                composable<Routes.MyProfile> {
 
-                                composable(Routes.NewPost){
+                                        val myProfileViewModel : MyProfileViewModel = hiltViewModel()
+
+                                        LaunchedEffect(Unit){
+                                                myProfileViewModel.loadData()
+                                        }
+
+                                        MyProfileScreen(
+                                                onBackClick = {navController.navigateUp() },
+                                                onRefresh = {myProfileViewModel.loadData()},
+                                                onSignOut = {
+                                                        myProfileViewModel.signOut()
+                                                        navController.navigate(Routes.Welcome){
+                                                                popUpTo<Routes.Welcome>{
+                                                                        inclusive =true
+                                                                }
+                                                        }
+                                                            },
+                                                myProfileViewModel = myProfileViewModel,
+                                                onProfileClick = { username->
+                                                        navController.navigate(Routes.Profile(username))
+                                                }
+                                        )
+                                }
+
+
+                                composable<Routes.AddPost>{
 
 
                                         val addPostViewModel : AddPostViewModel = hiltViewModel()
@@ -223,46 +272,6 @@ fun App(){
                 }
                 },
 
-                bottomBar = {
-                        currentDestination?.let {
-
-                                val bottomBarRoutes = listOf(
-                                        Routes.Home,
-                                        Routes.Notifications
-                                )
-
-
-                                if (currentDestination in bottomBarRoutes) {
-
-
-                                        println("CURRRENT DESTIONATIONS ++++ " + currentDestination)
-
-
-                                        /*MainBottomBar(
-                                                modifier = Modifier.padding(horizontal = 32.dp).padding(bottom = 32.dp),
-                                                onHomeClick = {
-                                                        navController.navigate(Routes.Home) {
-                                                                popUpTo(Routes.Home) {
-                                                                        inclusive = true
-                                                                }
-                                                        }
-                                                },
-                                                onNotificationsClick = {
-                                                        navController.navigate(Routes.Notifications) {
-                                                                popUpTo(Routes.Notifications) {
-                                                                        inclusive = true
-                                                                }
-                                                        }
-                                                },
-                                                onNewPostClick = {
-                                                        navController.navigate(Routes.NewPost)
-                                                },
-                                                currentRoute = currentDestination
-                                        )*/
-                                }
-                        }
-
-                }
 
         )
 

@@ -41,7 +41,6 @@ class TokenManager(private val context: Context) {
     suspend fun deleteToken(){
         context.dataStore.edit { store ->
             store[TOKEN_KEY] = ""
-
         }
     }
 

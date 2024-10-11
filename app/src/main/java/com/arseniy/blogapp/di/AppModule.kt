@@ -72,6 +72,7 @@ class AppModule {
 
 
 
+
     @Provides
     @Singleton
     fun provideApiService(retrofit : Retrofit) : ApiService {
