@@ -65,7 +65,7 @@ class AppModule {
                 db
             ),
             pagingSourceFactory = {
-                repository.getPostPagingSource()
+                repository.getPostPagingSource("feed")
             }
         )
     }

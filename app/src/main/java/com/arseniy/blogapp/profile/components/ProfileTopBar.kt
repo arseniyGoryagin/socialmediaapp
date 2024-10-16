@@ -9,6 +9,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,19 +27,16 @@ fun ProfileTopBar(onBackClick :() -> Unit, profileUsername : String ) {
         elevation = 0.dp
 
     ) {
-
         Box(
             modifier = Modifier.fillMaxWidth(),
 
         ){
-
             Icon(
-                Icons.Filled.Clear,
+                Icons.Filled.ArrowBack,
                 modifier = Modifier.clickable{
                    onBackClick()
                 }.align(Alignment.TopStart),
                 contentDescription = "Back"
-
             )
 
             Text(text = profileUsername, modifier = Modifier.align(Alignment.Center))

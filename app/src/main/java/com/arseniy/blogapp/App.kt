@@ -28,6 +28,9 @@ import com.arseniy.blogapp.navigation.Routes
 import com.arseniy.blogapp.notifications.presentation.NotificationsScreen
 import com.arseniy.blogapp.profile.presentation.ProfileScreen
 import com.arseniy.blogapp.profile.presentation.viewmodels.ProfileViewModel
+import com.arseniy.blogapp.search.presentation.SearchScreen
+import com.arseniy.blogapp.search.presentation.viewmodels.SearchViewModel
+import com.arseniy.blogapp.search.presentation.viewmodels.UiEvent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 
@@ -42,20 +45,21 @@ fun App(){
 
         val appViewModel : AppViewModel = hiltViewModel()
 
-        val tokenState =appViewModel.token.collectAsState(initial = "")
+        val logOutState =appViewModel.shouldLogOut
 
-        LaunchedEffect(tokenState){
+        LaunchedEffect(logOutState){
 
-                println("token === " + appViewModel.token)
 
-                appViewModel.token.collectLatest { token ->
+                appViewModel.shouldLogOut.collectLatest { state ->
 
-                        if(token == ""){
+                        if(state == true){
                                 navController.navigate(Routes.Auth){
                                         popUpTo(Routes.Welcome){
                                                 inclusive = true
                                         }
                                 }
+
+                                appViewModel.logOut()
                         }
                 }
         }
@@ -160,21 +164,25 @@ fun App(){
                                                                 inclusive = true
                                                         }
                                                 }
-                                        },
+                                                },
                                                 onAddPostClick = {
                                                 navController.navigate(Routes.AddPost)
-                                        },
+                                                },
                                                 onUsernameClick = { username ->
                                                         navController.navigate(Routes.Profile(username))
                                                 },
 
                                                 onProfileClick = {
                                                         navController.navigate(Routes.MyProfile)
+                                                },
+                                                onSearchClick = {
+                                                        navController.navigate(Routes.Search(""))
                                                 }
                                                 )
                                 }
-                                composable<Routes.Profile> { backStackEntry ->
 
+
+                                composable<Routes.Profile> { backStackEntry ->
 
                                         val profileRoute : Routes.Profile = backStackEntry.toRoute<Routes.Profile>()
 
@@ -197,6 +205,31 @@ fun App(){
                                         )
                                 }
 
+                                composable<Routes.Search> {  backStackEntry ->
+
+
+                                        val searchString = backStackEntry.toRoute<Routes.Search>().searchString
+
+                                        val searchViewModel = hiltViewModel<SearchViewModel, SearchViewModel.SearchViewModelFactory> { factory ->
+                                                factory.create(searchString)
+                                        }
+
+
+                                        SearchScreen(
+                                                searchViewModel = searchViewModel,
+                                                onAccountClick = { username ->
+                                                        navController.navigate(Routes.Profile(username))
+                                                },
+                                                onRefresh = {},
+                                                onSearchChange = { search ->
+                                                       searchViewModel.onUiEvent(UiEvent.SearchChanged(search))
+                                                },
+                                                onBackClick = {
+                                                        navController.navigateUp()
+                                                }
+                                        )
+                                }
+
                                 composable<Routes.Notifications> {
                                         NotificationsScreen(
                                                 onHomeClick = { navController.navigate(Routes.Home) {
@@ -209,6 +242,7 @@ fun App(){
 
                                                 })
                                 }
+
 
                                 composable<Routes.MyProfile> {
 
@@ -223,11 +257,6 @@ fun App(){
                                                 onRefresh = {myProfileViewModel.loadData()},
                                                 onSignOut = {
                                                         myProfileViewModel.signOut()
-                                                        navController.navigate(Routes.Welcome){
-                                                                popUpTo<Routes.Welcome>{
-                                                                        inclusive =true
-                                                                }
-                                                        }
                                                             },
                                                 myProfileViewModel = myProfileViewModel,
                                                 onProfileClick = { username->

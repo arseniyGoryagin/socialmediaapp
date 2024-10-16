@@ -92,7 +92,7 @@ class ProfileViewModel @Inject constructor(private val repository: Repository, p
                         username = username
                     ),
                     pagingSourceFactory = {
-                        repository.getPostPagingSource()
+                        repository.getPostPagingSource("user")
                     }
                 ).flow.cachedIn(viewModelScope)
 

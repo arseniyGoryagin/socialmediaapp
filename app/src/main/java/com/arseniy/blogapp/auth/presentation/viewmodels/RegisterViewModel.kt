@@ -99,9 +99,7 @@ class RegisterViewModel  @Inject constructor(private val repository: Repository)
             registerState = registerState.copy(isLoading = true)
 
             try {
-
-
-                val result = repository.register(registerInputState.emailInput, registerInputState.usernameInput, registerInputState.passwordInput);
+                val result = repository.register(registerInputState.emailInput.trim(), registerInputState.usernameInput.trim(), registerInputState.passwordInput.trim());
                 result.onLeft{
                     registerState = registerState.copy( errorMessage = it.message,isLoading = false, onErrorModified = false)
                 }.onRight { response ->

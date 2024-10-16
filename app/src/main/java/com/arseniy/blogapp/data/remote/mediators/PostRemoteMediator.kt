@@ -30,9 +30,6 @@ class PostRemoteMediator(private val repository: Repository, private val db :Db)
                 LoadType.APPEND -> pageNumber
             }
 
-            println("STATE  =  " + loadType)
-            println("Page " + page)
-
             if (loadType == LoadType.PREPEND) {
                return  MediatorResult.Success(endOfPaginationReached = true)
             }
@@ -54,12 +51,10 @@ class PostRemoteMediator(private val repository: Repository, private val db :Db)
                 db.withTransaction {
 
                     if (loadType == LoadType.REFRESH) {
-                        repository.clearAllPosts()
+                        repository.clearAllPosts("feed")
                     }
 
-                    repository.insertPosts(posts)
-
-                    println("Posts " + posts)
+                    repository.insertPosts(posts, source = "feed")
 
                     pageNumber += 1
 

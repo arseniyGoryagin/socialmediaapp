@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arseniy.blogapp.myprofile.components.MyProfileTopBar
+import com.arseniy.blogapp.myprofile.components.SignOutButton
 import com.arseniy.blogapp.myprofile.presentation.viewmodels.MyProfileViewModel
 import com.arseniy.blogapp.profile.presentation.viewmodels.ProfileViewModel
 import com.arseniy.blogapp.util.components.CenterLoadingCircle
@@ -53,8 +54,10 @@ fun MyProfileScreen (onBackClick : () -> Unit, myProfileViewModel: MyProfileView
                 CenterLoadingCircle()
             }
             else if(uiState.errorMessage != null){
-                println("Error !!!!!!")
-                ErrorWithRefresh(onRefreshClick = onRefresh, errorMessage = uiState.errorMessage!!)
+                Column(modifier = Modifier.fillMaxSize()){
+                    ErrorWithRefresh(onRefreshClick = onRefresh, errorMessage = uiState.errorMessage!!)
+                    SignOutButton(onSignOutClick = onSignOut, modifier = Modifier.fillMaxWidth())
+                }
             }
             else {
                 Box(
@@ -70,20 +73,15 @@ fun MyProfileScreen (onBackClick : () -> Unit, myProfileViewModel: MyProfileView
                         ) {
 
                         ProfileHeader(username = uiData.profile?.username, description = "", profilePicture = uiData.profile?.profilePicture,
-                            modifier = Modifier.fillMaxWidth().clickable { uiData.profile?.let {
-                                onProfileClick(it.username)
-                            } })
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    uiData.profile?.let {
+                                        onProfileClick(it.username)
+                                    }
+                                })
 
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = onSignOut,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White
-                            ),
-                            shape = RoundedCornerShape(10.dp)
-                        ) {
-                            Text(text = "Sign Out", color= Color.Red, fontSize = 14.sp)
-                        }
+                        SignOutButton(onSignOutClick = onSignOut, modifier = Modifier.fillMaxWidth())
                     }
                 }
             }

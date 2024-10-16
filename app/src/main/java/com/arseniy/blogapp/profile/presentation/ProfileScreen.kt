@@ -68,7 +68,11 @@ fun ProfileScreen(profileViewModel: ProfileViewModel, onBackClick : () -> Unit, 
 
                     if(userPosts?.loadState?.refresh is LoadState.Loading){
                         CenterLoadingCircle()
-                    }else {
+                    }
+                    else if(userPosts?.loadState?.refresh is LoadState.Error){
+                        ErrorWithRefresh(onRefreshClick = onRetryClick, errorMessage = "Error loading user posts! ${(userPosts.loadState.refresh as LoadState.Error).error.localizedMessage}")
+                    }
+                    else {
                         LazyColumn(
                             modifier = Modifier.fillMaxWidth()
                         ) {

@@ -19,7 +19,9 @@ data class  PostEntity (
     val username : String,
     val description : String,
     val profilePicture : String,
-    val userId : Long
+    val userId : Long,
+
+    val source : String,
 
 
 ){
@@ -27,7 +29,7 @@ data class  PostEntity (
     companion object{
 
 
-        fun toPostEntity(post : Post) : PostEntity{
+        fun toPostEntity(post : Post, source  : String) : PostEntity{
 
             return PostEntity(
                 id = post.id,
@@ -39,7 +41,8 @@ data class  PostEntity (
                 username = post.user.username,
                 description = post.user.description,
                 profilePicture = post.user.profilePicture,
-                userId = post.user.id
+                userId = post.user.id,
+                source = source,
             )
 
         }

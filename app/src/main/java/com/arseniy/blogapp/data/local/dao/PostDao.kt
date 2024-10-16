@@ -10,14 +10,17 @@ import androidx.room.Upsert
 @Dao
 interface PostDao {
 
-    @Query("Select * from posts_table")
-    fun getPosts() : PagingSource<Int, PostEntity>
+    @Query("Select * from posts_table where source = :source")
+    fun getPosts(source : String) : PagingSource<Int, PostEntity>
 
     @Upsert
     suspend fun insertPosts(posts : List<PostEntity>)
 
     @Query("delete from posts_table")
     suspend fun deleteAll()
+
+    @Query("delete from  posts_table where source = :source ")
+    suspend fun deleteBySource(source : String)
 
 
 }

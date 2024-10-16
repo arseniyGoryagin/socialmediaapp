@@ -67,8 +67,8 @@ class LoginViewModel @Inject constructor(private val repository: Repository)  : 
             try {
 
                 val result = repository.login(
-                    loginInputState.value.usernameInput,
-                    loginInputState.value.passwordInput
+                    loginInputState.value.usernameInput.trim(),
+                    loginInputState.value.passwordInput.trim()
                 )
 
                 result.onLeft {

@@ -14,6 +14,6 @@ data class Post(
     val likes : Long,
 
     val user : User,
-    val edited : Boolean
+    val edited : Boolean,
 
 )

@@ -15,9 +15,6 @@ class UserPostRemoteMediator(private val repository: Repository, private val db 
     var pageNumber = 0
 
 
-
-
-
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, PostEntity>
@@ -32,9 +29,6 @@ class UserPostRemoteMediator(private val repository: Repository, private val db 
             LoadType.APPEND -> pageNumber
         }
 
-        println("STATE  =  " + loadType)
-        println("Page " + page)
-
         if (loadType == LoadType.PREPEND) {
             return  MediatorResult.Success(endOfPaginationReached = true)
         }
@@ -45,21 +39,19 @@ class UserPostRemoteMediator(private val repository: Repository, private val db 
 
         val result  = repository.getUserPosts( username = username,limit = limit.toLong(), offset = offset.toLong());
 
-
+        println("result " + result)
 
         return result.fold( {
             MediatorResult.Error(it)
-
-
         },{ posts->
 
             db.withTransaction {
 
                 if (loadType == LoadType.REFRESH) {
-                    repository.clearAllPosts()
+                    repository.clearAllPosts(source = "user")
                 }
 
-                repository.insertPosts(posts)
+                repository.insertPosts(posts, source = "user")
 
                 pageNumber += 1
 

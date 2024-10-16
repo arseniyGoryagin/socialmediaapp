@@ -27,7 +27,12 @@ import com.arseniy.blogapp.util.components.MainBottomBar
 
 
 @Composable
-fun HomeScreen( homeViewModel: HomeViewModel, onNotificationClick : () -> Unit, onAddPostClick : () -> Unit, onUsernameClick : (String) -> Unit, onProfileClick : () -> Unit){
+fun HomeScreen( homeViewModel: HomeViewModel,
+                onNotificationClick : () -> Unit,
+                onAddPostClick : () -> Unit,
+                onUsernameClick : (String) -> Unit,
+                onProfileClick : () -> Unit,
+                onSearchClick : ()-> Unit){
 
 
         val posts = homeViewModel.postsPagingFlow.collectAsLazyPagingItems()
@@ -37,8 +42,7 @@ fun HomeScreen( homeViewModel: HomeViewModel, onNotificationClick : () -> Unit, 
                 topBar = {
                         HomeTopBar(
                                 onProfileClick = onProfileClick,
-                                onSearch = {},
-                                searchValue = ""
+                                onSearchClick = onSearchClick
                         )
                 },
                 content = { innerPadding ->

@@ -22,7 +22,8 @@ sealed interface Routes {
     @Serializable
     object MyProfile :Routes
 
-
+    @Serializable
+    class Search(val searchString: String) : Routes
 
     @Serializable
     object Auth : Routes

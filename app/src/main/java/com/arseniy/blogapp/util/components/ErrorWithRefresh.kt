@@ -24,7 +24,7 @@ fun ErrorWithRefresh(onRefreshClick  : () -> Unit, errorMessage : String ){
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center){
 
-        Text("Failed to load user profile " + errorMessage, color = Color.LightGray, textAlign = TextAlign.Center)
+        Text(errorMessage, color = Color.LightGray, textAlign = TextAlign.Center)
         IconButton(onClick = onRefreshClick){
             Icon(Icons.Filled.Refresh, contentDescription = "Retyr loading")
         }

@@ -34,10 +34,9 @@ class MyProfileViewModel @Inject constructor(private val repository: Repository)
     var myProfileData = MyProfileData()
 
 
-
     fun signOut(){
         viewModelScope.launch {
-            repository.logOut()
+            repository.shouldLogOut()
         }
     }
 
@@ -53,14 +52,9 @@ class MyProfileViewModel @Inject constructor(private val repository: Repository)
                 val result  = repository.getMe();
 
 
-                println("Result")
-                println(result)
-
-
                 result.onLeft {
 
                     println(it.localizedMessage)
-
 
                     myProfileStates.value = myProfileStates.value.copy(isLoading = false, errorMessage = it.localizedMessage)
                     return@launch

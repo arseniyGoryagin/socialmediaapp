@@ -8,6 +8,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,9 +19,9 @@ import com.arseniy.blogapp.util.components.SearchBar
 
 
 @Composable
-fun HomeTopBar(onProfileClick : () -> Unit, onSearch : (String) -> Unit ,searchValue : String){
+fun HomeTopBar(onProfileClick : () -> Unit, onSearchClick : () -> Unit){
 
-
+    /*
     TopAppBar(
         elevation = 0.dp,
         backgroundColor = Color.White
@@ -36,6 +37,27 @@ fun HomeTopBar(onProfileClick : () -> Unit, onSearch : (String) -> Unit ,searchV
                 modifier = Modifier.clickable { onProfileClick() })
 
             SearchBar(onChange = onSearch, value = searchValue)
+
+        }
+
+    }*/
+
+    TopAppBar(
+        elevation = 0.dp,
+        backgroundColor = Color.White
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                Icons.Filled.AccountCircle,
+                contentDescription = "Profile",
+                modifier = Modifier.clickable { onProfileClick() })
+
+            Icon(Icons.Filled.Search, contentDescription = "Search", modifier = Modifier.clickable{onSearchClick()})
+
 
         }
 
