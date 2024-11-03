@@ -1,6 +1,5 @@
-package com.arseniy.blogapp.myprofile.components
+package com.arseniy.blogapp.editprofile
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults

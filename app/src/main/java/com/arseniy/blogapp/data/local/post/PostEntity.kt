@@ -2,7 +2,7 @@ package com.arseniy.blogapp.data.local.enteties
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.arseniy.blogapp.domain.model.Post
+import com.arseniy.blogapp.network.domain.dto.Post
 
 
 @Entity(tableName = "posts_table")
